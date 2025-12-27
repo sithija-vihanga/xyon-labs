@@ -428,29 +428,28 @@ function createUnitreeGo2() {
     stripe2.position.set(0, 0.405, -0.07);
     robot.add(stripe2);
 
-    // HEAD UNIT
+    // HEAD UNIT - positioned at front of body, looking forward (+X direction)
     const headGroup = new THREE.Group();
+    headGroup.position.set(0.28, 0.36, 0);
 
     const headMain = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.12), blackMat);
-    headMain.position.set(0.28, 0.36, 0);
     headGroup.add(headMain);
 
-    // Camera eyes (stereo cameras)
+    // Camera eyes (stereo cameras) - facing forward (+X)
     const eyeGeom = new THREE.CylinderGeometry(0.018, 0.018, 0.02, 16);
+    eyeGeom.rotateZ(Math.PI / 2); // Rotate to face forward
 
     const leftEye = new THREE.Mesh(eyeGeom, screenMat);
-    leftEye.rotation.x = Math.PI / 2;
-    leftEye.position.set(0.28, 0.36, 0.07);
+    leftEye.position.set(0.06, 0, 0.03);
     headGroup.add(leftEye);
 
     const rightEye = new THREE.Mesh(eyeGeom, screenMat);
-    rightEye.rotation.x = Math.PI / 2;
-    rightEye.position.set(0.34, 0.36, 0.07);
+    rightEye.position.set(0.06, 0, -0.03);
     headGroup.add(rightEye);
 
-    // Depth sensor
-    const depthSensor = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.02, 0.02), grayMat);
-    depthSensor.position.set(0.31, 0.32, 0.07);
+    // Depth sensor - facing forward
+    const depthSensor = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.04), grayMat);
+    depthSensor.position.set(0.06, -0.02, 0);
     headGroup.add(depthSensor);
 
     robot.add(headGroup);
@@ -533,123 +532,121 @@ function createKinovaGen3() {
     const darkMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.7, roughness: 0.3 });
     const accentMat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x00f0ff, emissiveIntensity: 0.5 });
 
-    // BASE
-    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.04, 32), darkMat);
-    base.position.y = 0.02;
+    // BASE - fixed to ground
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.05, 32), darkMat);
+    base.position.y = 0.025;
     base.castShadow = true;
     robot.add(base);
 
     // Base ring light
-    const baseRing = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.005, 8, 32), accentMat);
+    const baseRing = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.005, 8, 32), accentMat);
     baseRing.rotation.x = Math.PI / 2;
-    baseRing.position.y = 0.04;
+    baseRing.position.y = 0.05;
     robot.add(baseRing);
 
-    // JOINT 1 - Base rotation
-    const joint1 = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.08, 32), whiteMat);
-    joint1.position.y = 0.08;
-    robot.add(joint1);
+    // Build arm as connected chain for proper animation
+    // SEGMENT 1 - Base rotator (rotates on Y axis)
+    const segment1 = new THREE.Group();
+    segment1.position.y = 0.05;
 
-    const joint1Ring = new THREE.Mesh(new THREE.TorusGeometry(0.056, 0.003, 8, 32), blueMat);
+    const joint1Housing = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.1, 32), whiteMat);
+    joint1Housing.position.y = 0.05;
+    segment1.add(joint1Housing);
+
+    const joint1Ring = new THREE.Mesh(new THREE.TorusGeometry(0.061, 0.004, 8, 32), blueMat);
     joint1Ring.rotation.x = Math.PI / 2;
-    joint1Ring.position.y = 0.1;
-    robot.add(joint1Ring);
+    joint1Ring.position.y = 0.08;
+    segment1.add(joint1Ring);
 
-    // LINK 1 - First segment
-    const link1Group = new THREE.Group();
-    const link1 = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.18, 32), whiteMat);
-    link1.position.y = 0.21;
+    robot.add(segment1);
+    animationData.arm = { segment1: segment1 };
+
+    // SEGMENT 2 - Shoulder link (tilts forward/back)
+    const segment2 = new THREE.Group();
+    segment2.position.y = 0.1;
+
+    const link1 = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.2, 32), whiteMat);
+    link1.position.y = 0.1;
     link1.castShadow = true;
-    link1Group.add(link1);
-    robot.add(link1Group);
-    animationData.arm = { link1: link1Group };
+    segment2.add(link1);
 
-    // JOINT 2 - Shoulder
-    const joint2 = new THREE.Mesh(new THREE.SphereGeometry(0.05, 32, 32), blueMat);
-    joint2.position.y = 0.32;
-    robot.add(joint2);
+    const shoulder = new THREE.Mesh(new THREE.SphereGeometry(0.055, 32, 32), blueMat);
+    shoulder.position.y = 0.2;
+    segment2.add(shoulder);
 
-    // LINK 2 - Upper arm
-    const link2Group = new THREE.Group();
-    link2Group.position.y = 0.32;
+    segment1.add(segment2);
+    animationData.arm.segment2 = segment2;
 
-    const link2 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.22, 32), whiteMat);
-    link2.position.set(0, 0.11, 0);
-    link2.rotation.x = -0.4;
-    link2.castShadow = true;
-    link2Group.add(link2);
-    robot.add(link2Group);
-    animationData.arm.link2 = link2Group;
+    // SEGMENT 3 - Upper arm
+    const segment3 = new THREE.Group();
+    segment3.position.y = 0.2;
 
-    // JOINT 3 - Elbow
-    const joint3 = new THREE.Mesh(new THREE.SphereGeometry(0.042, 32, 32), blueMat);
-    joint3.position.set(0.08, 0.5, 0);
-    robot.add(joint3);
+    const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.22, 32), whiteMat);
+    upperArm.position.y = 0.11;
+    upperArm.castShadow = true;
+    segment3.add(upperArm);
 
-    // LINK 3 - Forearm
-    const link3Group = new THREE.Group();
-    link3Group.position.set(0.08, 0.5, 0);
+    const elbow = new THREE.Mesh(new THREE.SphereGeometry(0.05, 32, 32), blueMat);
+    elbow.position.y = 0.22;
+    segment3.add(elbow);
 
-    const link3 = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.18, 32), whiteMat);
-    link3.position.set(0.06, 0.06, 0);
-    link3.rotation.z = 0.8;
-    link3.castShadow = true;
-    link3Group.add(link3);
-    robot.add(link3Group);
-    animationData.arm.link3 = link3Group;
+    segment2.add(segment3);
+    animationData.arm.segment3 = segment3;
 
-    // JOINT 4 - Wrist 1
-    const joint4 = new THREE.Mesh(new THREE.SphereGeometry(0.035, 32, 32), blueMat);
-    joint4.position.set(0.22, 0.58, 0);
-    robot.add(joint4);
+    // SEGMENT 4 - Forearm
+    const segment4 = new THREE.Group();
+    segment4.position.y = 0.22;
 
-    // LINK 4 - Wrist segment
-    const link4 = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.08, 32), whiteMat);
-    link4.position.set(0.28, 0.6, 0);
-    link4.rotation.z = Math.PI / 2;
-    robot.add(link4);
+    const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.18, 32), whiteMat);
+    forearm.position.y = 0.09;
+    forearm.castShadow = true;
+    segment4.add(forearm);
 
-    // JOINT 5 - Wrist 2
-    const joint5 = new THREE.Mesh(new THREE.SphereGeometry(0.03, 32, 32), blueMat);
-    joint5.position.set(0.34, 0.6, 0);
-    robot.add(joint5);
+    const wrist = new THREE.Mesh(new THREE.SphereGeometry(0.042, 32, 32), blueMat);
+    wrist.position.y = 0.18;
+    segment4.add(wrist);
 
-    // GRIPPER MOUNT
-    const gripperMount = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.04, 32), grayMat);
-    gripperMount.position.set(0.38, 0.6, 0);
-    gripperMount.rotation.z = Math.PI / 2;
-    robot.add(gripperMount);
+    segment3.add(segment4);
+    animationData.arm.segment4 = segment4;
 
-    // GRIPPER - Two finger parallel gripper
-    const gripperBase = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.04), darkMat);
-    gripperBase.position.set(0.42, 0.6, 0);
-    robot.add(gripperBase);
+    // SEGMENT 5 - Wrist/Gripper
+    const segment5 = new THREE.Group();
+    segment5.position.y = 0.18;
+
+    const wristLink = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.06, 32), whiteMat);
+    wristLink.position.y = 0.03;
+    segment5.add(wristLink);
+
+    // Gripper base
+    const gripperBase = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.04, 0.06), darkMat);
+    gripperBase.position.y = 0.08;
+    segment5.add(gripperBase);
 
     // Gripper fingers
-    const fingerGeom = new THREE.BoxGeometry(0.01, 0.06, 0.015);
+    const fingerGeom = new THREE.BoxGeometry(0.01, 0.05, 0.015);
 
     const leftFinger = new THREE.Mesh(fingerGeom, grayMat);
-    leftFinger.position.set(0.46, 0.6, 0.015);
-    robot.add(leftFinger);
-    animationData.arm.leftFinger = leftFinger;
+    leftFinger.position.set(0, 0.125, 0.02);
+    segment5.add(leftFinger);
 
     const rightFinger = new THREE.Mesh(fingerGeom, grayMat);
-    rightFinger.position.set(0.46, 0.6, -0.015);
-    robot.add(rightFinger);
+    rightFinger.position.set(0, 0.125, -0.02);
+    segment5.add(rightFinger);
+
+    // Finger tips
+    const leftTip = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.015, 0.018), accentMat);
+    leftTip.position.set(0, 0.155, 0.02);
+    segment5.add(leftTip);
+
+    const rightTip = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.015, 0.018), accentMat);
+    rightTip.position.set(0, 0.155, -0.02);
+    segment5.add(rightTip);
+
+    segment4.add(segment5);
+    animationData.arm.segment5 = segment5;
+    animationData.arm.leftFinger = leftFinger;
     animationData.arm.rightFinger = rightFinger;
 
-    // Finger tips (rubber pads)
-    const tipGeom = new THREE.BoxGeometry(0.012, 0.02, 0.018);
-
-    const leftTip = new THREE.Mesh(tipGeom, accentMat);
-    leftTip.position.set(0.466, 0.57, 0.015);
-    robot.add(leftTip);
-
-    const rightTip = new THREE.Mesh(tipGeom, accentMat);
-    rightTip.position.set(0.466, 0.57, -0.015);
-    robot.add(rightTip);
-
-    robot.position.set(-0.15, 0, 0);
     robot.visible = false;
     robots.arm = robot;
     scene.add(robot);
@@ -697,58 +694,73 @@ function animateRobots(time) {
     // Quadruped trotting animation
     if (robots.quadruped && robots.quadruped.visible && animationData.quadruped) {
         const trotSpeed = 5;
-        const legAmplitude = 0.5;  // Larger leg movement
+        const legAmplitude = 0.4;  // Leg swing amplitude
 
         if (animationData.quadruped.legs) {
             // Diagonal gait pattern: FL+BR move together, FR+BL move together
+            // Rotate on Z axis for forward/backward leg swing (dog walks along X axis)
             const phase1 = Math.sin(time * trotSpeed);
             const phase2 = -Math.sin(time * trotSpeed);
 
-            // Front-back swing motion
-            animationData.quadruped.legs[0].rotation.x = phase1 * legAmplitude; // FL
-            animationData.quadruped.legs[1].rotation.x = phase2 * legAmplitude; // FR
-            animationData.quadruped.legs[2].rotation.x = phase2 * legAmplitude; // BL
-            animationData.quadruped.legs[3].rotation.x = phase1 * legAmplitude; // BR
+            // Front legs swing forward/backward on Z axis
+            animationData.quadruped.legs[0].rotation.z = phase1 * legAmplitude; // FL
+            animationData.quadruped.legs[1].rotation.z = phase2 * legAmplitude; // FR
+            // Back legs swing opposite
+            animationData.quadruped.legs[2].rotation.z = phase2 * legAmplitude; // BL
+            animationData.quadruped.legs[3].rotation.z = phase1 * legAmplitude; // BR
         }
 
         // Body bounce - synchronized with leg movement
-        robots.quadruped.position.y = 0.06 + Math.abs(Math.sin(time * trotSpeed * 2)) * 0.015;
+        robots.quadruped.position.y = 0.06 + Math.abs(Math.sin(time * trotSpeed * 2)) * 0.012;
 
         // Slight body pitch (nose up/down during trot)
-        robots.quadruped.rotation.x = Math.sin(time * trotSpeed * 2) * 0.03;
+        robots.quadruped.rotation.z = Math.sin(time * trotSpeed * 2) * 0.02;
 
-        // Head look around
+        // Head look around - rotate on Y for left/right look
         if (animationData.quadruped.head) {
-            animationData.quadruped.head.rotation.y = Math.sin(time * 0.6) * 0.2;
-            animationData.quadruped.head.rotation.x = Math.sin(time * 0.4) * 0.08;
+            animationData.quadruped.head.rotation.y = Math.sin(time * 0.5) * 0.15;
         }
     }
 
-    // Robot arm manipulation animation
+    // Robot arm manipulation animation - using connected chain
     if (robots.arm && robots.arm.visible && animationData.arm) {
-        const armSpeed = 0.6;
+        const armSpeed = 0.5;
 
-        // Joint rotations - simulating pick and place motion
-        if (animationData.arm.link2) {
-            animationData.arm.link2.rotation.x = Math.sin(time * armSpeed) * 0.4 - 0.2;
-        }
-        if (animationData.arm.link3) {
-            animationData.arm.link3.rotation.z = Math.sin(time * armSpeed + 1) * 0.3 + 0.4;
+        // Base rotation - slow sweep
+        if (animationData.arm.segment1) {
+            animationData.arm.segment1.rotation.y = Math.sin(time * armSpeed * 0.3) * 0.6;
         }
 
-        // Gripper open/close - synced with arm movement for pick-place illusion
+        // Shoulder tilt
+        if (animationData.arm.segment2) {
+            animationData.arm.segment2.rotation.x = Math.sin(time * armSpeed) * 0.3 + 0.2;
+        }
+
+        // Upper arm bend
+        if (animationData.arm.segment3) {
+            animationData.arm.segment3.rotation.x = Math.sin(time * armSpeed + 0.5) * 0.4 - 0.3;
+        }
+
+        // Forearm movement
+        if (animationData.arm.segment4) {
+            animationData.arm.segment4.rotation.x = Math.sin(time * armSpeed + 1) * 0.3 + 0.2;
+        }
+
+        // Wrist rotation
+        if (animationData.arm.segment5) {
+            animationData.arm.segment5.rotation.z = Math.sin(time * armSpeed * 2) * 0.3;
+        }
+
+        // Gripper open/close - synced with reaching motion
         const gripperCycle = Math.sin(time * armSpeed);
-        const gripOpen = gripperCycle > 0 ? (gripperCycle * 0.015) : 0;
+        const gripOpen = gripperCycle > 0 ? (gripperCycle * 0.012) : 0;
 
         if (animationData.arm.leftFinger) {
-            animationData.arm.leftFinger.position.z = 0.015 + gripOpen;
+            animationData.arm.leftFinger.position.z = 0.02 + gripOpen;
         }
         if (animationData.arm.rightFinger) {
-            animationData.arm.rightFinger.position.z = -0.015 - gripOpen;
+            animationData.arm.rightFinger.position.z = -0.02 - gripOpen;
         }
-
-        // Base rotation - smooth sweeping motion
-        robots.arm.rotation.y = Math.sin(time * armSpeed * 0.4) * 0.5;
     }
 }
 
@@ -778,11 +790,11 @@ function showRobot(type) {
 
         // Adjust camera
         if (type === 'quadruped') {
-            camera.position.set(1.5, 0.8, 2);
+            camera.position.set(1.2, 0.6, 1.5);
             controls.target.set(0, 0.3, 0);
         } else if (type === 'arm') {
-            camera.position.set(1.2, 0.8, 1.5);
-            controls.target.set(0.15, 0.4, 0);
+            camera.position.set(1.5, 0.8, 1.5);
+            controls.target.set(0, 0.5, 0);
         } else {
             camera.position.set(0, 1.2, 3);
             controls.target.set(0, 0.9, 0);
@@ -801,26 +813,22 @@ function setupRobotSelector() {
 }
 
 function startAutoSwitch() {
-    const timerEl = document.getElementById('switch-timer');
-    switchTimer = 10;
+    switchTimer = 12;
 
     timerInterval = setInterval(() => {
         switchTimer--;
-        if (timerEl) timerEl.textContent = switchTimer;
 
         if (switchTimer <= 0) {
             const types = ['humanoid', 'quadruped', 'arm'];
             const nextIndex = (types.indexOf(currentRobot) + 1) % types.length;
             showRobot(types[nextIndex]);
-            switchTimer = 10;
+            switchTimer = 12;
         }
     }, 1000);
 }
 
 function resetAutoSwitch() {
-    switchTimer = 10;
-    const timerEl = document.getElementById('switch-timer');
-    if (timerEl) timerEl.textContent = switchTimer;
+    switchTimer = 12;
 }
 
 /* ========================================

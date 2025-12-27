@@ -243,24 +243,23 @@ function createUnitreeH1() {
     const blackMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.7, roughness: 0.3 });
     const darkGrayMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, metalness: 0.6, roughness: 0.4 });
     const orangeMat = new THREE.MeshStandardMaterial({ color: 0xff6600, metalness: 0.5, roughness: 0.3, emissive: 0xff6600, emissiveIntensity: 0.2 });
-    const whiteMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee, metalness: 0.3, roughness: 0.5 });
     const screenMat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x00f0ff, emissiveIntensity: 0.8 });
 
     // HEAD - Sleek helmet design
     const headGroup = new THREE.Group();
+    headGroup.position.y = 1.72;
 
     const headMain = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.18, 0.2), blackMat);
-    headMain.position.y = 1.72;
     headGroup.add(headMain);
 
     // Face screen/visor
     const visor = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.06, 0.02), screenMat);
-    visor.position.set(0, 1.72, 0.11);
+    visor.position.set(0, 0, 0.11);
     headGroup.add(visor);
 
     // Sensors on top
     const sensor = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.04, 16), darkGrayMat);
-    sensor.position.set(0, 1.83, 0);
+    sensor.position.set(0, 0.11, 0);
     headGroup.add(sensor);
 
     robot.add(headGroup);
@@ -305,29 +304,32 @@ function createUnitreeH1() {
     rightShoulder.position.set(0.26, 1.42, 0);
     robot.add(rightShoulder);
 
-    // ARMS
+    // ARMS - with proper pivot points at shoulder
     const createArm = (side) => {
-        const armGroup = new THREE.Group();
         const x = side === 'left' ? -0.32 : 0.32;
 
-        // Upper arm
+        // Arm group positioned at shoulder joint for proper rotation
+        const armGroup = new THREE.Group();
+        armGroup.position.set(x, 1.42, 0);
+
+        // Upper arm (relative to shoulder)
         const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.25, 16), blackMat);
-        upperArm.position.set(x, 1.25, 0);
+        upperArm.position.y = -0.17;
         armGroup.add(upperArm);
 
         // Elbow joint
         const elbow = new THREE.Mesh(new THREE.SphereGeometry(0.045, 16, 16), orangeMat);
-        elbow.position.set(x, 1.1, 0);
+        elbow.position.y = -0.32;
         armGroup.add(elbow);
 
         // Lower arm
         const lowerArm = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.03, 0.22, 16), darkGrayMat);
-        lowerArm.position.set(x, 0.95, 0);
+        lowerArm.position.y = -0.47;
         armGroup.add(lowerArm);
 
         // Hand
         const hand = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.08, 0.03), blackMat);
-        hand.position.set(x, 0.8, 0);
+        hand.position.y = -0.62;
         armGroup.add(hand);
 
         return armGroup;
@@ -339,41 +341,43 @@ function createUnitreeH1() {
     animationData.humanoid.leftArm = leftArm;
     animationData.humanoid.rightArm = rightArm;
 
-    // LEGS
+    // LEGS - with proper pivot points at hip
     const createLeg = (side) => {
-        const legGroup = new THREE.Group();
         const x = side === 'left' ? -0.12 : 0.12;
+
+        // Leg group positioned at hip joint for proper rotation
+        const legGroup = new THREE.Group();
+        legGroup.position.set(x, 0.88, 0);
 
         // Hip joint
         const hip = new THREE.Mesh(new THREE.SphereGeometry(0.055, 16, 16), darkGrayMat);
-        hip.position.set(x, 0.88, 0);
         legGroup.add(hip);
 
-        // Upper leg (thigh)
+        // Upper leg (thigh) - relative to hip
         const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.045, 0.28, 16), blackMat);
-        thigh.position.set(x, 0.7, 0);
+        thigh.position.y = -0.18;
         thigh.castShadow = true;
         legGroup.add(thigh);
 
         // Knee joint
         const knee = new THREE.Mesh(new THREE.SphereGeometry(0.05, 16, 16), orangeMat);
-        knee.position.set(x, 0.54, 0);
+        knee.position.y = -0.34;
         legGroup.add(knee);
 
         // Lower leg (shin)
         const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.04, 0.3, 16), darkGrayMat);
-        shin.position.set(x, 0.35, 0);
+        shin.position.y = -0.53;
         shin.castShadow = true;
         legGroup.add(shin);
 
         // Ankle
         const ankle = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), darkGrayMat);
-        ankle.position.set(x, 0.18, 0);
+        ankle.position.y = -0.70;
         legGroup.add(ankle);
 
         // Foot
         const foot = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 0.14), blackMat);
-        foot.position.set(x, 0.02, 0.02);
+        foot.position.set(0, -0.86, 0.02);
         foot.castShadow = true;
         legGroup.add(foot);
 
@@ -457,38 +461,40 @@ function createUnitreeGo2() {
     lidar.position.set(0, 0.42, 0);
     robot.add(lidar);
 
-    // LEGS - Go2 has distinctive leg design
+    // LEGS - Go2 has distinctive leg design with proper pivot points
     const createGo2Leg = (frontBack, leftRight) => {
-        const legGroup = new THREE.Group();
         const x = frontBack === 'front' ? 0.18 : -0.18;
         const z = leftRight === 'left' ? -0.1 : 0.1;
 
+        // Leg group positioned at hip for proper rotation
+        const legGroup = new THREE.Group();
+        legGroup.position.set(x, 0.28, z);
+
         // Hip motor housing
         const hipMotor = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.06, 0.06), grayMat);
-        hipMotor.position.set(x, 0.28, z);
         legGroup.add(hipMotor);
 
-        // Thigh (upper leg)
+        // Thigh (upper leg) - relative to hip
         const thigh = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.12, 0.04), blackMat);
-        thigh.position.set(x, 0.18, z);
+        thigh.position.y = -0.10;
         thigh.castShadow = true;
         legGroup.add(thigh);
 
         // Knee motor
         const kneeCap = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.04, 16), orangeMat);
         kneeCap.rotation.x = Math.PI / 2;
-        kneeCap.position.set(x, 0.1, z);
+        kneeCap.position.y = -0.18;
         legGroup.add(kneeCap);
 
         // Shin (lower leg)
         const shin = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.12, 0.03), grayMat);
-        shin.position.set(x, 0.02, z);
+        shin.position.y = -0.26;
         shin.castShadow = true;
         legGroup.add(shin);
 
         // Foot pad
         const foot = new THREE.Mesh(new THREE.SphereGeometry(0.02, 16, 16), blackMat);
-        foot.position.set(x, -0.06, z);
+        foot.position.y = -0.34;
         legGroup.add(foot);
 
         return legGroup;
@@ -656,80 +662,93 @@ function createKinovaGen3() {
 function animateRobots(time) {
     // Humanoid walking animation
     if (robots.humanoid && robots.humanoid.visible && animationData.humanoid) {
-        const walkSpeed = 3;
-        const walkAmplitude = 0.15;
+        const walkSpeed = 2.5;
+        const legAmplitude = 0.4;  // Larger leg swing
+        const armAmplitude = 0.35; // Arms swing opposite to legs
 
-        // Arm swing
+        // Arm swing - opposite to legs for natural walking
         if (animationData.humanoid.leftArm) {
-            animationData.humanoid.leftArm.rotation.x = Math.sin(time * walkSpeed) * walkAmplitude;
+            animationData.humanoid.leftArm.rotation.x = Math.sin(time * walkSpeed) * armAmplitude;
         }
         if (animationData.humanoid.rightArm) {
-            animationData.humanoid.rightArm.rotation.x = -Math.sin(time * walkSpeed) * walkAmplitude;
+            animationData.humanoid.rightArm.rotation.x = -Math.sin(time * walkSpeed) * armAmplitude;
         }
 
-        // Leg movement
+        // Leg movement - swing from hip
         if (animationData.humanoid.leftLeg) {
-            animationData.humanoid.leftLeg.rotation.x = -Math.sin(time * walkSpeed) * walkAmplitude;
+            animationData.humanoid.leftLeg.rotation.x = -Math.sin(time * walkSpeed) * legAmplitude;
         }
         if (animationData.humanoid.rightLeg) {
-            animationData.humanoid.rightLeg.rotation.x = Math.sin(time * walkSpeed) * walkAmplitude;
+            animationData.humanoid.rightLeg.rotation.x = Math.sin(time * walkSpeed) * legAmplitude;
         }
 
-        // Subtle body bob
-        robots.humanoid.position.y = Math.abs(Math.sin(time * walkSpeed * 2)) * 0.01;
+        // Body bob - happens twice per walk cycle
+        robots.humanoid.position.y = Math.abs(Math.sin(time * walkSpeed * 2)) * 0.025;
 
-        // Head look
+        // Slight body sway
+        robots.humanoid.rotation.z = Math.sin(time * walkSpeed) * 0.02;
+
+        // Head look around
         if (animationData.humanoid.head) {
-            animationData.humanoid.head.rotation.y = Math.sin(time * 0.5) * 0.1;
+            animationData.humanoid.head.rotation.y = Math.sin(time * 0.4) * 0.15;
         }
     }
 
     // Quadruped trotting animation
     if (robots.quadruped && robots.quadruped.visible && animationData.quadruped) {
-        const trotSpeed = 4;
-        const trotAmplitude = 0.2;
+        const trotSpeed = 5;
+        const legAmplitude = 0.5;  // Larger leg movement
 
         if (animationData.quadruped.legs) {
-            // Diagonal gait: FL+BR, FR+BL
-            animationData.quadruped.legs[0].rotation.x = Math.sin(time * trotSpeed) * trotAmplitude; // FL
-            animationData.quadruped.legs[1].rotation.x = -Math.sin(time * trotSpeed) * trotAmplitude; // FR
-            animationData.quadruped.legs[2].rotation.x = -Math.sin(time * trotSpeed) * trotAmplitude; // BL
-            animationData.quadruped.legs[3].rotation.x = Math.sin(time * trotSpeed) * trotAmplitude; // BR
+            // Diagonal gait pattern: FL+BR move together, FR+BL move together
+            const phase1 = Math.sin(time * trotSpeed);
+            const phase2 = -Math.sin(time * trotSpeed);
+
+            // Front-back swing motion
+            animationData.quadruped.legs[0].rotation.x = phase1 * legAmplitude; // FL
+            animationData.quadruped.legs[1].rotation.x = phase2 * legAmplitude; // FR
+            animationData.quadruped.legs[2].rotation.x = phase2 * legAmplitude; // BL
+            animationData.quadruped.legs[3].rotation.x = phase1 * legAmplitude; // BR
         }
 
-        // Body bounce
-        robots.quadruped.position.y = 0.06 + Math.abs(Math.sin(time * trotSpeed * 2)) * 0.008;
+        // Body bounce - synchronized with leg movement
+        robots.quadruped.position.y = 0.06 + Math.abs(Math.sin(time * trotSpeed * 2)) * 0.015;
+
+        // Slight body pitch (nose up/down during trot)
+        robots.quadruped.rotation.x = Math.sin(time * trotSpeed * 2) * 0.03;
 
         // Head look around
         if (animationData.quadruped.head) {
-            animationData.quadruped.head.rotation.y = Math.sin(time * 0.8) * 0.15;
-            animationData.quadruped.head.rotation.x = Math.sin(time * 0.5) * 0.05;
+            animationData.quadruped.head.rotation.y = Math.sin(time * 0.6) * 0.2;
+            animationData.quadruped.head.rotation.x = Math.sin(time * 0.4) * 0.08;
         }
     }
 
     // Robot arm manipulation animation
     if (robots.arm && robots.arm.visible && animationData.arm) {
-        const armSpeed = 0.8;
+        const armSpeed = 0.6;
 
         // Joint rotations - simulating pick and place motion
         if (animationData.arm.link2) {
-            animationData.arm.link2.rotation.x = Math.sin(time * armSpeed) * 0.3 - 0.2;
+            animationData.arm.link2.rotation.x = Math.sin(time * armSpeed) * 0.4 - 0.2;
         }
         if (animationData.arm.link3) {
-            animationData.arm.link3.rotation.z = Math.sin(time * armSpeed + 1) * 0.2 + 0.4;
+            animationData.arm.link3.rotation.z = Math.sin(time * armSpeed + 1) * 0.3 + 0.4;
         }
 
-        // Gripper open/close
-        const gripperPhase = (Math.sin(time * armSpeed * 2) + 1) * 0.5; // 0 to 1
+        // Gripper open/close - synced with arm movement for pick-place illusion
+        const gripperCycle = Math.sin(time * armSpeed);
+        const gripOpen = gripperCycle > 0 ? (gripperCycle * 0.015) : 0;
+
         if (animationData.arm.leftFinger) {
-            animationData.arm.leftFinger.position.z = 0.015 + gripperPhase * 0.01;
+            animationData.arm.leftFinger.position.z = 0.015 + gripOpen;
         }
         if (animationData.arm.rightFinger) {
-            animationData.arm.rightFinger.position.z = -0.015 - gripperPhase * 0.01;
+            animationData.arm.rightFinger.position.z = -0.015 - gripOpen;
         }
 
-        // Base rotation
-        robots.arm.rotation.y = Math.sin(time * armSpeed * 0.5) * 0.3;
+        // Base rotation - smooth sweeping motion
+        robots.arm.rotation.y = Math.sin(time * armSpeed * 0.4) * 0.5;
     }
 }
 

@@ -106,11 +106,30 @@
             </div>
             <div class="hero-3d">
                 <div id="robot-canvas"></div>
+                <div class="robot-selector">
+                    <button class="robot-btn active" data-robot="humanoid" title="Humanoid Robot">
+                        <i class="fas fa-person"></i>
+                    </button>
+                    <button class="robot-btn" data-robot="quadruped" title="Quadruped Robot">
+                        <i class="fas fa-dog"></i>
+                    </button>
+                    <button class="robot-btn" data-robot="arm" title="Robot Arm">
+                        <i class="fas fa-hand-rock"></i>
+                    </button>
+                </div>
+                <div class="robot-info">
+                    <span class="robot-name">Unitree H1 Humanoid</span>
+                    <span class="robot-type">Bipedal Platform</span>
+                </div>
                 <div class="canvas-overlay">
                     <span class="interact-hint">
                         <i class="fas fa-hand-pointer"></i>
                         Drag to rotate
                     </span>
+                </div>
+                <div class="auto-rotate-indicator">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Auto-switching in <span id="switch-timer">10</span>s</span>
                 </div>
             </div>
         </div>
@@ -165,28 +184,34 @@
                 <h3 class="tech-title">Technologies We Work With</h3>
                 <div class="tech-icons">
                     <div class="tech-item" data-tooltip="ROS2">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/bb/Ros_logo.svg" alt="ROS2">
+                        <img src="https://raw.githubusercontent.com/ros-infrastructure/artwork/master/ros_logo.svg" alt="ROS2">
                     </div>
                     <div class="tech-item" data-tooltip="Gazebo">
-                        <i class="fas fa-cube"></i>
+                        <img src="https://classic.gazebosim.org/assets/logos/gazebo_vert_pos-faad8cc37ab336f850e549077ef5831e5098034532113b06328dfd70355fb8f7.svg" alt="Gazebo">
                     </div>
                     <div class="tech-item" data-tooltip="Python">
-                        <i class="fab fa-python"></i>
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python">
                     </div>
                     <div class="tech-item" data-tooltip="C++">
-                        <span class="tech-text">C++</span>
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" alt="C++">
                     </div>
-                    <div class="tech-item" data-tooltip="TensorFlow">
-                        <i class="fas fa-project-diagram"></i>
+                    <div class="tech-item" data-tooltip="PyTorch">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" alt="PyTorch">
                     </div>
                     <div class="tech-item" data-tooltip="OpenCV">
-                        <i class="fas fa-eye"></i>
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/opencv/opencv-original.svg" alt="OpenCV">
                     </div>
-                    <div class="tech-item" data-tooltip="MoveIt2">
-                        <i class="fas fa-arrows-alt"></i>
+                    <div class="tech-item" data-tooltip="Linux">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" alt="Linux">
                     </div>
-                    <div class="tech-item" data-tooltip="SolidWorks">
-                        <i class="fas fa-drafting-compass"></i>
+                    <div class="tech-item" data-tooltip="Docker">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker">
+                    </div>
+                    <div class="tech-item" data-tooltip="Git">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git">
+                    </div>
+                    <div class="tech-item" data-tooltip="NVIDIA">
+                        <img src="https://cdn.worldvectorlogo.com/logos/nvidia.svg" alt="NVIDIA">
                     </div>
                 </div>
             </div>

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xyon Labs | Intelligent Robotics Solutions</title>
+    <meta name="description" content="Xyon Labs - Pioneering intelligent robotics solutions and cutting-edge research in autonomous systems, manipulation, and human-robot interaction.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particles-container"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <span class="logo-icon">
+                    <svg viewBox="0 0 50 50" class="logo-svg">
+                        <polygon points="25,2 48,15 48,35 25,48 2,35 2,15" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="25" cy="25" r="8" fill="currentColor"/>
+                        <line x1="25" y1="17" x2="25" y2="8" stroke="currentColor" stroke-width="2"/>
+                        <line x1="31" y1="21" x2="38" y2="14" stroke="currentColor" stroke-width="2"/>
+                        <line x1="31" y1="29" x2="38" y2="36" stroke="currentColor" stroke-width="2"/>
+                        <line x1="25" y1="33" x2="25" y2="42" stroke="currentColor" stroke-width="2"/>
+                        <line x1="19" y1="29" x2="12" y2="36" stroke="currentColor" stroke-width="2"/>
+                        <line x1="19" y1="21" x2="12" y2="14" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </span>
+                <span class="logo-text">XYON<span class="logo-accent">LABS</span></span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#research" class="nav-link">Research</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    <span>Pioneering the Future of Robotics</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="title-line">Intelligent</span>
+                    <span class="title-line gradient-text">Robotics</span>
+                    <span class="title-line">Solutions</span>
+                </h1>
+                <p class="hero-description">
+                    We design and develop cutting-edge autonomous systems, advanced manipulation platforms,
+                    and intelligent navigation solutions that push the boundaries of human-robot interaction.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn btn-primary">
+                        <span>Explore Projects</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#research" class="btn btn-secondary">
+                        <span>Our Research</span>
+                        <i class="fas fa-flask"></i>
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="12">0</span>
+                        <span class="stat-label">Projects</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="5">0</span>
+                        <span class="stat-label">Research Areas</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="3">0</span>
+                        <span class="stat-label">Publications</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-3d">
+                <div id="robot-canvas"></div>
+                <div class="canvas-overlay">
+                    <span class="interact-hint">
+                        <i class="fas fa-hand-pointer"></i>
+                        Drag to rotate
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <span>Scroll to explore</span>
+            <div class="scroll-indicator">
+                <div class="scroll-dot"></div>
+            </div>
+        </div>
+        <div class="hero-grid"></div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-tag">About Us</span>
+                <h2 class="section-title">Shaping Tomorrow's <span class="gradient-text">Robotics</span></h2>
+                <p class="section-subtitle">At Xyon Labs, we combine cutting-edge research with practical engineering to create intelligent robotic systems that solve real-world challenges.</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Autonomous Systems</h3>
+                    <p>Developing self-navigating robots with advanced SLAM, path planning, and decision-making capabilities for complex environments.</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-hand-rock"></i>
+                    </div>
+                    <h3>Robot Manipulation</h3>
+                    <p>Creating dexterous manipulation systems from 6-DOF arms to dual-arm platforms for precise handling of objects and materials.</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI Integration</h3>
+                    <p>Implementing machine learning and computer vision algorithms for intelligent perception, prediction, and adaptive behaviors.</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Human-Robot Interaction</h3>
+                    <p>Designing intuitive interfaces and social robots that can safely and effectively collaborate with humans.</p>
+                </div>
+            </div>
+            <div class="tech-stack">
+                <h3 class="tech-title">Technologies We Work With</h3>
+                <div class="tech-icons">
+                    <div class="tech-item" data-tooltip="ROS2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/bb/Ros_logo.svg" alt="ROS2">
+                    </div>
+                    <div class="tech-item" data-tooltip="Gazebo">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <div class="tech-item" data-tooltip="Python">
+                        <i class="fab fa-python"></i>
+                    </div>
+                    <div class="tech-item" data-tooltip="C++">
+                        <span class="tech-text">C++</span>
+                    </div>
+                    <div class="tech-item" data-tooltip="TensorFlow">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="tech-item" data-tooltip="OpenCV">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="tech-item" data-tooltip="MoveIt2">
+                        <i class="fas fa-arrows-alt"></i>
+                    </div>
+                    <div class="tech-item" data-tooltip="SolidWorks">
+                        <i class="fas fa-drafting-compass"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Research Section -->
+    <section id="research" class="research">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-tag">Research</span>
+                <h2 class="section-title">Our Research <span class="gradient-text">Focus Areas</span></h2>
+                <p class="section-subtitle">Pushing the boundaries of robotics through innovative research and development.</p>
+            </div>
+            <div class="research-grid">
+                <div class="research-card featured">
+                    <div class="research-image">
+                        <div class="research-placeholder">
+                            <i class="fas fa-route"></i>
+                        </div>
+                    </div>
+                    <div class="research-content">
+                        <span class="research-tag">Navigation</span>
+                        <h3>Multi-Floor Robot Navigation</h3>
+                        <p>Developing advanced navigation frameworks that enable robots to seamlessly navigate multi-story buildings, including elevator interactions and floor-specific localization.</p>
+                        <ul class="research-features">
+                            <li><i class="fas fa-check"></i> Behavior tree-based decision making</li>
+                            <li><i class="fas fa-check"></i> Elevator simulation plugins</li>
+                            <li><i class="fas fa-check"></i> Dynamic map switching</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="research-card">
+                    <div class="research-image">
+                        <div class="research-placeholder">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="research-content">
+                        <span class="research-tag">Crowd Navigation</span>
+                        <h3>Occlusion-Aware Navigation</h3>
+                        <p>Research on predicting human movements and navigating through crowded spaces with occlusion awareness.</p>
+                    </div>
+                </div>
+                <div class="research-card">
+                    <div class="research-image">
+                        <div class="research-placeholder">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                    </div>
+                    <div class="research-content">
+                        <span class="research-tag">Multi-Robot Systems</span>
+                        <h3>Fleet Coordination</h3>
+                        <p>Line-of-sight navigation algorithms for multi-robot exploration while maintaining network connectivity.</p>
+                    </div>
+                </div>
+                <div class="research-card">
+                    <div class="research-image">
+                        <div class="research-placeholder">
+                            <i class="fas fa-hand-paper"></i>
+                        </div>
+                    </div>
+                    <div class="research-content">
+                        <span class="research-tag">Manipulation</span>
+                        <h3>Soft Material Handling</h3>
+                        <p>Dual-arm manipulation research for handling deformable and soft materials with precision.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-tag">Portfolio</span>
+                <h2 class="section-title">Featured <span class="gradient-text">Projects</span></h2>
+                <p class="section-subtitle">Explore our cutting-edge robotics projects and innovations.</p>
+            </div>
+
+            <!-- Project Filters -->
+            <div class="project-filters">
+                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <button class="filter-btn" data-filter="mobile">Mobile Robots</button>
+                <button class="filter-btn" data-filter="manipulation">Manipulation</button>
+                <button class="filter-btn" data-filter="simulation">Simulation</button>
+                <button class="filter-btn" data-filter="research">Research</button>
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="projects-grid">
+
+                <!-- Project 1: Mobile Robot Receptionist -->
+                <div class="project-card" data-category="mobile research">
+                    <div class="project-media">
+                        <div class="media-placeholder">
+                            <i class="fas fa-video"></i>
+                            <span>Video Coming Soon</span>
+                        </div>
+                        <!-- Uncomment when video is available:
+                        <video autoplay loop muted playsinline>
+                            <source src="assets/videos/receptionist.mp4" type="video/mp4">
+                        </video>
+                        -->
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Mobile Robot Receptionist 2.0</h3>
+                            <span class="project-year">2024 - Ongoing</span>
+                        </div>
+                        <p>Semi-humanoid robot with multi-floor navigation framework, elevator interactions, and crowd-aware navigation capabilities.</p>
+                        <div class="project-tags">
+                            <span class="tag">ROS2</span>
+                            <span class="tag">Nav2</span>
+                            <span class="tag">Behavior Trees</span>
+                            <span class="tag">SLAM</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-gallery">
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2: Voyager Platform -->
+                <div class="project-card" data-category="mobile simulation">
+                    <div class="project-media">
+                        <div class="media-placeholder">
+                            <i class="fas fa-video"></i>
+                            <span>Video Coming Soon</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Voyager: Mobile Robot Platform</h3>
+                            <span class="project-year">2024 - 2025</span>
+                        </div>
+                        <p>Complete ROS2 mobile robot developed from scratch with SLAM, Nav2 navigation stack, and custom hardware integration.</p>
+                        <div class="project-tags">
+                            <span class="tag">ROS2</span>
+                            <span class="tag">Gazebo</span>
+                            <span class="tag">SolidWorks</span>
+                            <span class="tag">LiDAR</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-gallery">
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3: Hydra Manipulator -->
+                <div class="project-card" data-category="manipulation simulation">
+                    <div class="project-media">
+                        <div class="media-placeholder">
+                            <i class="fas fa-video"></i>
+                            <span>Video Coming Soon</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Hydra: 6-DOF Robot Manipulator</h3>
+                            <span class="project-year">2024 - Ongoing</span>
+                        </div>
+                        <p>Custom-designed 6-DOF manipulator with MoveIt2 integration for trajectory planning and hardware control.</p>
+                        <div class="project-tags">
+                            <span class="tag">MoveIt2</span>
+                            <span class="tag">ROS2</span>
+                            <span class="tag">SolidWorks</span>
+                            <span class="tag">Control</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-gallery">
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4: Dual-Arm Kinova -->
+                <div class="project-card" data-category="manipulation research">
+                    <div class="project-media">
+                        <div class="media-placeholder">
+                            <i class="fas fa-video"></i>
+                            <span>Video Coming Soon</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Dual-Arm Kinova Manipulation</h3>
+                            <span class="project-year">2024</span>
+                        </div>
+                        <p>Genesis-based dual-arm system for handling deformable materials with coordinated manipulation strategies.</p>
+                        <div class="project-tags">
+                            <span class="tag">Genesis</span>
+                            <span class="tag">Kinova</span>
+                            <span class="tag">Dual-Arm</span>
+                            <span class="tag">Soft Materials</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-gallery">
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 5: Multi-Robot Fleet -->
+                <div class="project-card" data-category="mobile research">
+                    <div class="project-media">
+                        <div class="media-placeholder">
+                            <i class="fas fa-video"></i>
+                            <span>Video Coming Soon</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Line of Sight Navigation for Robot Fleets</h3>
+                            <span class="project-year">2024</span>
+                        </div>
+                        <p>Multi-robot exploration algorithms maintaining network connectivity through line-of-sight communication.</p>
+                        <div class="project-tags">
+                            <span class="tag">Multi-Robot</span>
+                            <span class="tag">Exploration</span>
+                            <span class="tag">Networking</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-gallery">
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 6: Unitree H1 -->
+                <div class="project-card" data-category="simulation">
+                    <div class="project-media">
+                        <div class="media-placeholder">
+                            <i class="fas fa-video"></i>
+                            <span>Video Coming Soon</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Unitree H1 Humanoid Simulation</h3>
+                            <span class="project-year">2024</span>
+                        </div>
+                        <p>Simulation and control development for the Unitree H1 humanoid robot platform.</p>
+                        <div class="project-tags">
+                            <span class="tag">Humanoid</span>
+                            <span class="tag">Simulation</span>
+                            <span class="tag">Control</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-gallery">
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 7: Fire Response -->
+                <div class="project-card" data-category="mobile">
+                    <div class="project-media">
+                        <div class="media-placeholder">
+                            <i class="fas fa-video"></i>
+                            <span>Video Coming Soon</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Fire Response Multi-Robot System</h3>
+                            <span class="project-year">2024</span>
+                        </div>
+                        <p>Autonomous mobile robots designed for emergency fire response scenarios.</p>
+                        <div class="project-tags">
+                            <span class="tag">Emergency Response</span>
+                            <span class="tag">Autonomous</span>
+                            <span class="tag">Multi-Robot</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-gallery">
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 8: Webots Simulations -->
+                <div class="project-card" data-category="simulation">
+                    <div class="project-media">
+                        <div class="media-placeholder">
+                            <i class="fas fa-video"></i>
+                            <span>Video Coming Soon</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Webots Multi-Robot Simulations</h3>
+                            <span class="project-year">2023</span>
+                        </div>
+                        <p>Competition-winning robot simulations developed in Webots environment.</p>
+                        <div class="project-tags">
+                            <span class="tag">Webots</span>
+                            <span class="tag">Competition</span>
+                            <span class="tag">Simulation</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-gallery">
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 9: Self-Balancing -->
+                <div class="project-card" data-category="mobile">
+                    <div class="project-media">
+                        <div class="media-placeholder">
+                            <i class="fas fa-video"></i>
+                            <span>Video Coming Soon</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Self-Balancing Platform Design</h3>
+                            <span class="project-year">2023</span>
+                        </div>
+                        <p>Control systems design for self-balancing robot platform with dynamic stability.</p>
+                        <div class="project-tags">
+                            <span class="tag">Control Systems</span>
+                            <span class="tag">Balancing</span>
+                            <span class="tag">PID</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-gallery">
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 10: Soft Robot -->
+                <div class="project-card" data-category="research">
+                    <div class="project-media">
+                        <div class="media-placeholder">
+                            <i class="fas fa-video"></i>
+                            <span>Video Coming Soon</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Soft Flexible Robot Development</h3>
+                            <span class="project-year">2023</span>
+                        </div>
+                        <p>Bio-inspired soft robot with locomotion and integrated sensing capabilities.</p>
+                        <div class="project-tags">
+                            <span class="tag">Soft Robotics</span>
+                            <span class="tag">Bio-inspired</span>
+                            <span class="tag">Sensing</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-gallery">
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 11: Data Acquisition -->
+                <div class="project-card" data-category="research">
+                    <div class="project-media">
+                        <div class="media-placeholder">
+                            <i class="fas fa-video"></i>
+                            <span>Video Coming Soon</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Embedded Data Acquisition System</h3>
+                            <span class="project-year">2024</span>
+                        </div>
+                        <p>High-frequency sensor data acquisition system with Python-based user interface.</p>
+                        <div class="project-tags">
+                            <span class="tag">Embedded</span>
+                            <span class="tag">Data Acquisition</span>
+                            <span class="tag">Python</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-gallery">
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 12: Crowd Navigation Research -->
+                <div class="project-card" data-category="research">
+                    <div class="project-media">
+                        <div class="media-placeholder publication">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Published Research</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <h3>Occlusion-Aware Crowd Navigation</h3>
+                            <span class="project-year">2024</span>
+                        </div>
+                        <p>Published research on robot navigation in occluded human environments with predictive algorithms.</p>
+                        <div class="project-tags">
+                            <span class="tag">Research</span>
+                            <span class="tag">Publication</span>
+                            <span class="tag">Navigation</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fas fa-file-pdf"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-gallery">
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="gallery-item placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-tag">Get in Touch</span>
+                <h2 class="section-title">Let's Build the <span class="gradient-text">Future</span> Together</h2>
+                <p class="section-subtitle">Interested in collaboration, research partnerships, or have a robotics challenge? We'd love to hear from you.</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Email</h3>
+                            <a href="mailto:contact@xyonlabs.com">contact@xyonlabs.com</a>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Location</h3>
+                            <p>Sri Lanka</p>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" id="name" name="name" required placeholder=" ">
+                        <label for="name">Your Name</label>
+                        <span class="focus-border"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" required placeholder=" ">
+                        <label for="email">Email Address</label>
+                        <span class="focus-border"></span>
+                    </div>
+                    <div class="form-group">
+                        <select id="subject" name="subject" required>
+                            <option value="" disabled selected>Select a topic</option>
+                            <option value="collaboration">Research Collaboration</option>
+                            <option value="project">Project Inquiry</option>
+                            <option value="consulting">Consulting</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <label for="subject">Subject</label>
+                        <span class="focus-border"></span>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" name="message" rows="5" required placeholder=" "></textarea>
+                        <label for="message">Your Message</label>
+                        <span class="focus-border"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <span>Send Message</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span class="logo-icon">
+                    <svg viewBox="0 0 50 50" class="logo-svg">
+                        <polygon points="25,2 48,15 48,35 25,48 2,35 2,15" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="25" cy="25" r="8" fill="currentColor"/>
+                    </svg>
+                </span>
+                <span class="logo-text">XYON<span class="logo-accent">LABS</span></span>
+            </div>
+            <p class="footer-tagline">Pioneering Intelligent Robotics Solutions</p>
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#research">Research</a>
+                <a href="#projects">Projects</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <p class="footer-copyright">&copy; 2024 Xyon Labs. All rights reserved.</p>
+        </div>
+        <div class="footer-grid"></div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+</body>
+</html>
